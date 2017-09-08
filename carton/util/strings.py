@@ -8,5 +8,7 @@ RESOURCE_FREE = "resource '{resource}' is not locked"
 COMMAND_NOT_FOUND = "command '{command}' not found"
 PYTHON_MODULE_EXPECTED = "expected a Python module or 'str', got '{bad_type}'"
 DECORATED_NOT_CALLABLE = "decorated value is not callable"
+WRONG_TYPE = "expected {expected} but got {bad_type}"
 
 # Command-line messages
+CORRUPT_FILE = "Warning! File '{file}' could not be loaded as expected. The original file was moved to {file}.bak, and empty data is used instead."
