@@ -21,6 +21,15 @@ class Module:
             if _name in getattr(value, '_procs', ()):
                 return value
 
+    def acquire(self, resource):
+        return self.carton.acquire(self, resource)
+
+    def release(self, resource):
+        return self.carton.release(self, resource)
+
+    def __getattr__(self, key):
+        return getattr(self.carton, key, None)
+
 def hook(value, name=None):
     if isinstance(value, str):
         return functools.partial(hook, name=value)
@@ -268,7 +277,7 @@ class Core:
             return results[index] if len(results) > 0 else None
 
     def proc(self, _name, *args, **kwargs):
-        modules = filter(lambda s: not s.startswith('#'), self._modules)
+        modules = tuple(filter(lambda s: not s.startswith('#'), self._modules))
         for name in reversed(modules):
             f = self._modules[name].get_proc(_name)
             if callable(f):
