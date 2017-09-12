@@ -1,12 +1,19 @@
 import collections as co
 import copy
+import getpass
 import json
+import platform
+import shutil
 from carton.core import hook, Module, proc
 from carton.util import strings as s
 
 class ConfigModule(Module):
-    # TODO: Load environment from elsewhere.
-    environment = {}
+    environment = {
+        'which': shutil.which,
+        'host': platform.node(),
+        'user': getpass.getuser(),
+        'platform': platform.system()
+    }
 
     def _patch(self, database, patch):
         if not isinstance(database, co.abc.MutableMapping):
@@ -16,8 +23,8 @@ class ConfigModule(Module):
             ))
         elif not isinstance(patch, co.Mapping):
             raise ValueError(s.WRONG_TYPE.format(
-            	expected="a mapping",
-            	bad_type=type(patch).__name__
+                expected="a mapping",
+                bad_type=type(patch).__name__
             ))
 
         for key, value in patch.items():
@@ -67,7 +74,13 @@ class ConfigModule(Module):
             print(s.CORRUPT_FILE.format(file=self.config))
             self.acquire('config.json.bak')
             self.config.rename(self.config.with_suffix('.json.bak'))
+            self.database = {}
 
+        for env in self.hook('update_environment', _filter="all").values():
+            try:
+                self.environment.update(env)
+            except:
+                pass
         self.local = self._reduce(self.database, self.environment)
 
     @hook

@@ -254,7 +254,7 @@ class Core:
 
 
     # Module queries
-    def hook(self, _name, *args, _filter="latest", _restrict=None, **kwargs):
+    def hook(self, _name, *args, _filter='latest', _restrict=None, **kwargs):
         results = collections.OrderedDict()
         modules = filter(lambda s: not s.startswith('#'), self._modules)
         if _restrict is not None:
@@ -269,10 +269,10 @@ class Core:
 
         if callable(_filter):
             return _filter(results)
-        elif _filter == "all":
+        elif _filter == 'all':
             return results
         else:
-            index = 0 if _filter in ("earliest", "first") else -1
+            index = 0 if _filter in ('earliest', 'first') else -1
             results = tuple(filter(lambda v: v is not None, results.values()))
             return results[index] if len(results) > 0 else None
 
