@@ -4,6 +4,7 @@ import getpass
 import json
 import platform
 import shutil
+import sys
 from carton.core import hook, Module, proc
 from carton.util import strings as s
 
@@ -45,8 +46,12 @@ class ConfigModule(Module):
             return database
 
         condition = database.get('if', 'True')
-        if not eval(condition, {'__builtins__': {}}, environment):
+        try:
+            if not eval(condition, {'__builtins__': {}}, environment):
                 return {}
+        except Exception:
+            print(s.CONDITION_CRASH.format(condition=condition), file=sys.stderr)
+            return {}
 
         reduced = copy.deepcopy(database)
         reduced.pop('if', None)
@@ -71,7 +76,7 @@ class ConfigModule(Module):
         except FileNotFoundError:
             self.database = {}
         except json.decoder.JSONDecodeError:
-            print(s.CORRUPT_FILE.format(file=self.config))
+            print(s.CORRUPT_FILE.format(file=self.config), file=sys.stderr)
             self.acquire('config.json.bak')
             self.config.rename(self.config.with_suffix('.json.bak'))
             self.database = {}

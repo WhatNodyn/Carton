@@ -17,3 +17,4 @@ INVALID_CONFIGURATION = "configuration element '{element}' has an unexpected for
 
 # Command-line messages
 CORRUPT_FILE = "Warning! File '{file}' could not be loaded as expected. The original file was moved to {file}.bak, and empty data is used instead."
+CONDITION_CRASH = "Warning! Condition '{condition}' could not be evaluated properly. Assuming it evaluates to False."
